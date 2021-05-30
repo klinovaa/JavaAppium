@@ -1,11 +1,9 @@
 package tests;
 
+import com.sun.tools.internal.ws.wscompile.AuthInfo;
 import lib.CoreTestCase;
 import lib.Platform;
-import lib.ui.ArticlePageObject;
-import lib.ui.MyListsPageObject;
-import lib.ui.NavigationUI;
-import lib.ui.SearchPageObject;
+import lib.ui.*;
 import lib.ui.factories.ArticlePageObjectFactory;
 import lib.ui.factories.MyListsPageObjectFactory;
 import lib.ui.factories.NavigationUIFactory;
@@ -16,7 +14,9 @@ public class MyListsTests extends CoreTestCase
 {
     private static final String
                                 name_of_folder = "Learning programming",
-                                search_line = "Java";
+                                search_line = "Java",
+                                login = "TestWikiProject",
+                                password = "qWerty123456";
 
     @Test
     public void testSaveFirstArticleToMyList()
@@ -24,7 +24,7 @@ public class MyListsTests extends CoreTestCase
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine("Java");
-        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
+        SearchPageObject.clickByArticleWithSubstring("bject-oriented programming language");
 
         ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.waitForTitleElement();
@@ -32,13 +32,25 @@ public class MyListsTests extends CoreTestCase
 
         if (Platform.getInstance().isAndroid()) {
             ArticlePageObject.addArticleToMyList(name_of_folder);
-        } else {
+        } else if (Platform.getInstance().isIOS()) {
             ArticlePageObject.addArticlesToMySaved();
             ArticlePageObject.closeArticleOverlay();
+        } else {
+            ArticlePageObject.addArticlesToMySaved();
+
+            AuthorizationPageObject Auth = new AuthorizationPageObject(driver);
+            Auth.clickAuthButton();
+            Auth.enterLoginData(login, password);
+            Auth.submitForm();
+
+            ArticlePageObject.waitForTitleElement();
+
+            assertEquals("We are not on the same page after login", article_title, ArticlePageObject.getArticleTitle());
         }
         ArticlePageObject.closeArticle();
 
         NavigationUI NavigationUI = NavigationUIFactory.get(driver);
+        NavigationUI.openNavigation();
         NavigationUI.clickMyLists();
 
         MyListsPageObject MyListsPageObject = MyListsPageObjectFactory.get(driver);
@@ -53,7 +65,7 @@ public class MyListsTests extends CoreTestCase
         SearchPageObject SearchPageObject = SearchPageObjectFactory.get(driver);
         SearchPageObject.initSearchInput();
         SearchPageObject.typeSearchLine(search_line);
-        SearchPageObject.clickByArticleWithSubstring("Object-oriented programming language");
+        SearchPageObject.clickByArticleWithSubstring("bject-oriented programming language");
 
         ArticlePageObject ArticlePageObject = ArticlePageObjectFactory.get(driver);
         ArticlePageObject.waitForTitleElement();
@@ -64,10 +76,24 @@ public class MyListsTests extends CoreTestCase
             ArticlePageObject.closeArticle();
             SearchPageObject.initSearchInput();
             SearchPageObject.typeSearchLine(search_line);
-        } else {
+        } else if (Platform.getInstance().isIOS()){
             ArticlePageObject.addArticlesToMySaved();
             ArticlePageObject.closeArticleOverlay();
             ArticlePageObject.searchWikipedia();
+        } else {
+            ArticlePageObject.addArticlesToMySaved();
+
+            AuthorizationPageObject Auth = new AuthorizationPageObject(driver);
+            Auth.clickAuthButton();
+            Auth.enterLoginData(login, password);
+            Auth.submitForm();
+
+            ArticlePageObject.waitForTitleElement();
+            assertEquals("We are not on the same page after login", article_title, ArticlePageObject.getArticleTitle());
+            ArticlePageObject.searchWikipedia();
+
+            SearchPageObject.initSearchInput();
+            SearchPageObject.typeSearchLine(search_line);
         }
 
         SearchPageObject.clickByArticleWithSubstring("Programming language");
@@ -76,12 +102,15 @@ public class MyListsTests extends CoreTestCase
         if (Platform.getInstance().isAndroid()) {
             ArticlePageObject.addArticleToCreatedList(name_of_folder);
             ArticlePageObject.closeArticle();
-        } else {
+        } else if (Platform.getInstance().isMW()){
             ArticlePageObject.addArticlesToMySaved();
             ArticlePageObject.tapToGoHome();
+        } else {
+            ArticlePageObject.addArticlesToMySaved();
         }
 
         NavigationUI NavigationUI = NavigationUIFactory.get(driver);
+        NavigationUI.openNavigation();
         NavigationUI.clickMyLists();
 
         MyListsPageObject MyListsPageObject = MyListsPageObjectFactory.get(driver);

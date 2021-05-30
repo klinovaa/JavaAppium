@@ -1,7 +1,7 @@
 package lib.ui.android;
 
-import io.appium.java_client.AppiumDriver;
 import lib.ui.ArticlePageObject;
+import org.openqa.selenium.remote.RemoteWebDriver;
 
 public class AndroidArticlePageObject extends ArticlePageObject {
     static {
@@ -16,7 +16,7 @@ public class AndroidArticlePageObject extends ArticlePageObject {
             ADD_TO_CREATED_LIST = "xpath://*[@resource-id='org.wikipedia:id/item_container']//*[@text='{NAME_OF_FOLDER}']";
     }
 
-    public AndroidArticlePageObject(AppiumDriver driver)
+    public AndroidArticlePageObject(RemoteWebDriver driver)
     {
         super(driver);
     }
