@@ -44,7 +44,7 @@ abstract public class ArticlePageObject extends MainPageObject
         WebElement title_element = waitForTitleElement();
         if (Platform.getInstance().isAndroid()){
             return title_element.getAttribute("text");
-        } else if(Platform.getInstance().isAndroid()){
+        } else if(Platform.getInstance().isIOS()){
             return title_element.getAttribute("name");
         } else {
             return title_element.getText();
