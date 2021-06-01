@@ -1,5 +1,6 @@
 package lib.ui;
 
+import io.qameta.allure.Step;
 import lib.Platform;
 import org.openqa.selenium.remote.RemoteWebDriver;
 
@@ -41,30 +42,38 @@ abstract public class MyListsPageObject extends MainPageObject
         super(driver);
     }
 
+    @Step("Opening folder with name '{name_of_folder}'")
     public void openFolderByName(String name_of_folder)
     {
         String folder_name_xpath = getFolderXpathByName(name_of_folder);
         this.waitForElementAndClick(folder_name_xpath, "Can't find folder by name " + name_of_folder, 5);
+        screenshot(this.takeScreenshot("folder_is_open"));
     }
 
+    @Step("Waiting for article with title '{article_title}'")
     public void waitForArticleToAppearByTitle(String article_title)
     {
         String article_xpath = getSaveArticleXpathByTitle(article_title);
         this.waitForElementPresent(article_xpath, "Can't find saved article by title " + article_title, 15);
+        screenshot(this.takeScreenshot("article_by_title"));
     }
 
+    @Step("Waiting for article with title '{article_title}' to disappear")
     public void waitForArticleToDisappearByTitle(String article_title)
     {
         String article_xpath = getSaveArticleXpathByTitle(article_title);
         this.waitForElementNotPresent(article_xpath, "Saved article still present with title " + article_title, 15);
     }
 
+    @Step("Waiting for article with description '{article_description}'")
     public void waitForArticleToAppearByDescription(String article_description)
     {
         String article_xpath = getSaveArticleXpathByDescription(article_description);
         this.waitForElementPresent(article_xpath, "Can't find saved article by description " + article_description, 15);
+        screenshot(this.takeScreenshot("article_by_description"));
     }
 
+    @Step("Deleting article from my list")
     public void swipeByArticleToDelete(String article_title)
     {
         this.waitForArticleToAppearByTitle(article_title);
@@ -87,8 +96,10 @@ abstract public class MyListsPageObject extends MainPageObject
         }
 
         this.waitForArticleToDisappearByTitle(article_title);
+        screenshot(this.takeScreenshot("article_is_deleted"));
     }
 
+    @Step("Getting article title and make sure it's correct")
     public String getArticleTitle()
     {
         if (Platform.getInstance().isAndroid()){
@@ -98,6 +109,7 @@ abstract public class MyListsPageObject extends MainPageObject
         }
     }
 
+    @Step("Opening article with description '{article_description}'")
     public void openArticleByDescription(String article_description)
     {
         String article_name_xpath = getSaveArticleXpathByDescription(article_description);
